@@ -10,6 +10,10 @@ bool isOperator(char ch) {
     return ch == '+' or ch == '-' or ch == '*' or ch == '/' or ch == '^';
 }
 
+bool isNumber(char ch) {
+    return isdigit(ch) or ch == '.';
+}
+
 int priority(char op) {
     if (op == '+' or op == '-')
         return 1;
@@ -24,9 +28,16 @@ string infixToRPN(const string& infix) {
     stringstream output;
     Stack<char> operators;
 
-    for (char ch : infix) {
-        if (isdigit(ch)) {
-            output << ch << ' ';
+    stringstream ss(infix);
+    char ch;
+    while (ss >> ch) {
+        if (isNumber(ch)) {
+            output << ch;
+            while (ss.peek() and isNumber(ss.peek())) {
+                ss >> ch;
+                output << ch;
+            }
+            output << ' ';
         } else if (ch == '(') {
             operators.push(ch);
         } else if (ch == ')') {
